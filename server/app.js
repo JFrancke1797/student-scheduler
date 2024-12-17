@@ -7,6 +7,8 @@ const HOST = process.env.HOST
 
 const { dbConnect } = require("./db")
 
+"proof of development branch"
+
 app.listen(PORT, HOST, () => {
     dbConnect(),
     console.log(`[server] listening on ${HOST}:${PORT}`)
