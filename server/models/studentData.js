@@ -1,7 +1,7 @@
 const { mongoose } = require("../db")
 //isAdmin might need changing
 const isAdmin = require("../middlewares/isAdmin")
-//schema pulled from demographics/parents/school data page - change/update if needed
+//schema stripped down - user entered data
 const studentData = mongoose.Schema(
     {
         
@@ -19,8 +19,17 @@ const studentData = mongoose.Schema(
             },
             mtgLocation: {
                 type: String,
-                require: false
+                require: true
             },
+            beginTime: {
+                type: String,
+                require: true
+            },
+            endTime: {
+                type: String,
+                require: true
+            },
+
             
         }
     )
