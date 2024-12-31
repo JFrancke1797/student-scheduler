@@ -12,7 +12,7 @@ export default function Calender() {
 
     const handleSelect = (info) => {
 
-        const {start, ends} = info
+        const {start, end} = info
         const eventName = prompt('Enter event name')
 
         if (eventName){
@@ -20,7 +20,7 @@ export default function Calender() {
                 id: 'Teacher Name',
                 title: eventName,
                 start,
-                ends
+                end
             }])
         }
     }
