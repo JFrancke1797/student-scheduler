@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 
 //create user endpoint
 router.post("/register", async (req, res) => {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;register
 
     try{
         if(!firstName || !lastName || !email || !password){

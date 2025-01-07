@@ -22,11 +22,11 @@ const userData = mongoose.Schema(
             type: String,
             require: true
         },
-        isAdmin: {
-            type: Boolean,
-            default: true
+        role: { //property is "role"
+            type: String,
+            enum: ["User", "Admin"], // Enum to specify allowed roles
+            default: "User", // Default role
         }
     }
 )
-//enter parameters when established
-    module.exports = mongoose.model("", )
+    module.exports = mongoose.model("User", userData)
