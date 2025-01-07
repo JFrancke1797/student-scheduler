@@ -1,10 +1,10 @@
 const { mongoose } = require("../db")
-//isAdmin might need changing
+//isAdmin must be present in auth
 const isAdmin = require("../middlewares/isAdmin")
-//schema stripped down - user entered data
 const studentData = mongoose.Schema(
-    {
-        
+    
+    
+        {
             firstName: {
                 type: String,
                 require: true

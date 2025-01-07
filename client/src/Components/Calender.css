@@ -1,0 +1,23 @@
+body {
+
+    background-color:steelblue;
+}
+
+h2 {
+
+    color: whitesmoke;
+}
+
+.fc {
+    background-color: dodgerblue;
+}
+
+table {
+
+    background-color: beige;
+}
+
+.fc-daygrid-day-events {
+    
+    font-size: small;
+}
