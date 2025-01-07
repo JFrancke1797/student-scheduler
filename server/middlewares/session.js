@@ -1,6 +1,6 @@
 
 const jwt = require("jsonwebtoken")
-const User = require("../models/user")
+const User = require("../models/userData")
 const JWT_KEY = process.env.JWT_KEY
 
 const sessionValidation = async (req, res, next) => {
@@ -14,7 +14,7 @@ const sessionValidation = async (req, res, next) => {
 
         const foundUser = await User.findById(payload._id)
 
-        req.body.user = { userID: foundUser._id, fullName: foundUser.fullName }
+        req.body.user = { userID: foundUser._id, firstName: foundUser.firstName }
 
         next()
     } catch(err) {
