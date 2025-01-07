@@ -22,7 +22,7 @@ const userData = mongoose.Schema(
             type: String,
             require: true
         },
-        role: {
+        role: { //property is "role"
             type: String,
             enum: ["User", "Admin"], // Enum to specify allowed roles
             default: "User", // Default role
