@@ -3,14 +3,14 @@ import './loginSignUp.css'
 
 import logo_icon from '../Assets/logo.png'
 
-export default function LoginSignUp() {
+export default function LoginSignUp({ updateLocalStorage }) {
 
     const [action, setAction] = useState("Login")
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    // const [login, setLogin] = useState(true)
+    const [login, setLogin] = useState(true)
 
     const handleSubmit = event => {
         event.preventDefault()
@@ -21,7 +21,7 @@ export default function LoginSignUp() {
 
             const body = login
             ? { email, password }
-            : { fullName, age, email, password }
+            : { firstName,lastName, email, password }
 
         fetch(url, {
             method: "POST",
