@@ -52,15 +52,6 @@ router.post("/register", async (req, res) => {
 }
 })
 
-
-
-
-
-
-
-
-
-
 //login endpoint
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
