@@ -102,8 +102,6 @@ router.delete("/:id", async (req, res) => {
             deletedEvent
         })
 
-        save(restof, dbPath)
-
     } catch (err) {
         console.log(err)
         res.status(500).json({
