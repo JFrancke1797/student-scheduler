@@ -3,12 +3,13 @@ const express = require("express");
 const User = require("../models/userData");
 const router = express.Router();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken")
 const mongoose = require("mongoose");
 
 
 //create user endpoint
 router.post("/register", async (req, res) => {
-    const { firstName, lastName, email, password } = req.body;register
+    const { firstName, lastName, email, password } = req.body;
 
     try{
         if(!firstName || !lastName || !email || !password){
@@ -69,7 +70,7 @@ router.post("/login", async (req, res) => {
             email: user.email,
             isAdmin: user.isAdmin
         }
-        const token = jwt.sign(payload, process.env.JWT_SECRET);
+        const token = jwt.sign(payload, process.env.JWT_KEY);
         
         res.json({ message: 'Login successful', token });
     } catch (err) {
