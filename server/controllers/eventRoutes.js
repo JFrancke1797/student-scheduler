@@ -2,6 +2,14 @@ const router = require("express").Router()
 
 const Event = require("../models/event")
 
+function getPayload (token) {
+    let tokenArray = token.split('.')
+
+    let tokenPayload = JSON.parse(atob(tokenArray[1]))
+
+    console.log(tokenPayload)
+}
+
 router.get("/", async (req, res) => {
     try {
         const allEvents = await Event.find({})
