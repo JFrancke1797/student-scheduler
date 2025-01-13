@@ -3,16 +3,19 @@ const express = require("express");
 const User = require("../models/userData");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken")
 const mongoose = require("mongoose");
+const SALT = process.env.SALT
+const jwt = require("jsonwebtoken")
+const JWT_KEY = process.env.JWT_KEY
+console.log("JWT_KEY:", JWT_KEY)
 
 
 //create user endpoint
 router.post("/register", async (req, res) => {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, role } = req.body;
 
     try{
-        if(!firstName || !lastName || !email || !password){
+        if(!firstName || !lastName || !email || !password || !role){
             return res.status(400).json({ err: "Please complete all fields"});
         }
 
@@ -28,10 +31,21 @@ router.post("/register", async (req, res) => {
         firstName,
         lastName,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        role
     })
 
     await newUser.save();
+
+    const payload = {
+        id: newUser._id,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "1h" });
+
     res.status(201).json({ message: "User created successfully", userId: newUser._id})
 }catch (err) {
     res.status(500).json({ err: "internal server error" });
@@ -68,7 +82,6 @@ router.post("/login", async (req, res) => {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-            isAdmin: user.isAdmin
         }
         const token = jwt.sign(payload, process.env.JWT_KEY);
         
