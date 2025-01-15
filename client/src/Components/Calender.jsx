@@ -6,6 +6,8 @@ import timeGridView from '@fullcalendar/timegrid'
 import interactionPlugin, {Draggable} from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
 import '../Components/Calender.css'
+import { number } from 'prop-types'
+
 
 
 
@@ -13,21 +15,31 @@ export default function Calender() {
 
  
     const [events, setEvents] = useState([
-      {title: 'ting 1', id: '1'},
-      {title: 'ting 2', id: '2'},
-      {title: 'ting 3', id: '3'},
-      {title: 'ting 4', id: '4'},
-      {title: 'ting 5', id: '5'}
+      {title: 'Classroom 1', id: '1'},
+      {title: 'Classroom 2', id: '2'},
+      {title: 'Classroom 3', id: '3'},
+      {title: 'Classroom 4', id: '4'},
+      {title: 'Classroom 5', id: '5'}
     ])
 
-    const [allEvents, setAllevents] = useState([])
-    const [showmodal, setShowModal] = useState(false)
+    const [newEvent, setNewEvent] = useState({
+
+      title: '',
+      start: '',
+      allDay: false,
+      id: 0
+    })
+    const [allEvents, setAllEvents] = useState([])
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [idToDelete, setIdToDelete] = useState(number | null)
 
     useEffect(() => {
       
       let dropTing = document.getElementById('draggable-el')
+      
 
       if(dropTing){
+
         new Draggable(dropTing,{
           itemSelector: 'div',
           eventData: function(eventEl){
@@ -38,9 +50,47 @@ export default function Calender() {
           }
         })
       }
-
+ 
     },[])
+    
+    //added code to handle dropping events into delete area
+    function handleEventDrop(info) {
+      if (info.draggedEl.id === 'delete-area') {
+        setIdToDelete(info.event.id);
+        setShowDeleteModal(true);
+      }
+    }
 
+    //added code to initialize confirmation of deletion
+    function confirmDelete() {
+      setAllEvents(allEvents.filter(event => event.id !== idToDelete)); //this is a kind of clunky way to separate out the events not selected
+      setShowDeleteModal(false);
+    }
+
+    //added code to allow cancellation
+    function cancelDelete() {
+      setShowDeleteModal(false);
+      setIdToDelete(null);
+    }
+  
+
+
+
+
+
+
+
+    function addEvent(data){
+
+      const event = {...newEvent, start: data.date, allDay }
+    } 
+
+    function handleDeleteModal (data){
+
+      setShowDeleteModal(true)
+      setIdToDelete(data.event.id)
+      console.log(data)
+    } 
 
 
   return (
@@ -58,7 +108,7 @@ export default function Calender() {
             </div>
           )))}
         </div>
-    <h2>Teacher Scheduel</h2>
+    <h2>Teacher Schedule</h2>
       <FullCalendar
         plugins={[dayGridView,timeGridView,interactionPlugin,listPlugin]}
         headerToolbar={{
@@ -69,11 +119,26 @@ export default function Calender() {
         droppable = {true}
         selectable = {true}
         editable = {true}
-        events={{}}
-        dateClick={{}}
+        events={allEvents}
+        eventClick={(data) => handleDeleteModal(data)}
       />
     </div>
+    <div id="delete-area" style={{ marginTop: '20px', padding: '10px', background: '#f8d7da', color: '#721c24', textAlign: 'center' }}>
+          🗑️ Drag Here to Delete
+        </div>
+      
 
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Confirm Delete</h3>
+            <p>Are you sure you want to delete this event?</p>
+            <button onClick={confirmDelete}>Yes, Delete</button>
+            <button onClick={cancelDelete}>Cancel</button>
+          </div>
+        </div>
+      )}
     </>
-  )
+  );
 }
