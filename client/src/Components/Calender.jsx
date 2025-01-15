@@ -1,5 +1,5 @@
 "use client"
-import React ,{ useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridView from '@fullcalendar/daygrid'
 import timeGridView from '@fullcalendar/timegrid'
@@ -25,19 +25,13 @@ export default function Calender() {
 
     const [allEvents, setAllevents] = useState([])
     const [showmodal, setShowModal] = useState(false)
-    const [eventToEdit, setEventToEdit] = useState(null)
-    const [newEvent, setNewEvent] = useState({
-      title: '',
-      start: '',
-      allDay: false,
-      id: 0
-    })
 
     useEffect(() => {
       
       let dropTing = document.getElementById('draggable-el')
-      
+
       if(dropTing){
+
         new Draggable(dropTing,{
           itemSelector: 'div',
           eventData: function(eventEl){
@@ -98,7 +92,7 @@ export default function Calender() {
 
     <h2>Teacher Scheduel</h2>
       <FullCalendar
-        plugins={[dayGridView,timeGridView,interactionPlugin,listPlugin, modalPlugin]}
+        plugins={[dayGridView,timeGridView,interactionPlugin,listPlugin]}
         headerToolbar={{
             center: 'title',
             left: 'dayGridMonth,timeGridWeek,dayGridDay,listWeek'
@@ -107,8 +101,8 @@ export default function Calender() {
         droppable = {true}
         selectable = {true}
         editable = {true}
-        drop={(data) => addEvent(data)}
-        dateClick={clickTing}
+        events={{}}
+        dateClick={{}}
       />
     </div>
        
