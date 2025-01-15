@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridView from '@fullcalendar/daygrid'
 import timeGridView from '@fullcalendar/timegrid'
@@ -22,23 +22,40 @@ export default function Calender() {
       {title: 'Classroom 5', id: '5'}
     ])
 
-    const [newEvent, setNewEvent] = useState({
+    const [allEvents, setAllevents] = useState([])
+    const [showmodal, setShowModal] = useState(false)
+    const calendarRef = useRef(null)
 
-      title: '',
-      start: '',
-      allDay: false,
-      id: 0
-    })
-    const [allEvents, setAllEvents] = useState([])
-    const [showDeleteModal, setShowDeleteModal] = useState(false)
-    const [idToDelete, setIdToDelete] = useState(number | null)
+    const handleEventDrop = (info) => {
+      
+      const updatedEvents = [...events]
+      const eventIndex = updatedEvents.findIndex((event) => event.id === info.event.id)
+      updatedEvents[eventIndex] = {
+        ...updatedEvents[eventIndex],
+        start: info.event.start, 
+      }
+      setEvents(updatedEvents)
+    }
+
+    const handleEventResize = (info) => {
+      const updatedEvents = [...events];
+      const eventIndex = updatedEvents.findIndex((event) => event.id === info.event.id)
+      updatedEvents[eventIndex] = {
+        ...updatedEvents[eventIndex],
+        start: info.event.start, 
+        end: info.event.end, 
+      }
+      setEvents(updatedEvents)
+    }
 
     useEffect(() => {
       
       let dropTing = document.getElementById('draggable-el')
       
+      
 
       if(dropTing){
+
 
         new Draggable(dropTing,{
           itemSelector: 'div',
@@ -110,6 +127,7 @@ export default function Calender() {
         </div>
     <h2>Teacher Schedule</h2>
       <FullCalendar
+        ref={calendarRef}
         plugins={[dayGridView,timeGridView,interactionPlugin,listPlugin]}
         headerToolbar={{
             center: 'title',
@@ -119,6 +137,9 @@ export default function Calender() {
         droppable = {true}
         selectable = {true}
         editable = {true}
+        events={events}
+        eventDrop={handleEventDrop}
+        eventResize={handleEventResize}
         events={allEvents}
         eventClick={(data) => handleDeleteModal(data)}
       />
