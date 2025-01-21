@@ -1,18 +1,29 @@
 const router = require("express").Router()
+const jwt = require("jsonwebtoken")
+const jwt_decode = require("jwt-decode")
 
 const Event = require("../models/event")
 
-function getPayload (token) {
-    let tokenArray = token.split('.')
+async function getId(token) {
+    const res = await fetch("http://127.0.0.1:4000/user/login", {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    const jwtToken = await res.json()
+    jwt.verify(jwtToken)
 
-    let tokenPayload = JSON.parse(atob(tokenArray[1]))
+    const decodedToken = jwtDecode(jwtToken)
 
-    console.log(tokenPayload)
+    const userId = decodedToken.id
+
+    return userId
 }
 
 router.get("/", async (req, res) => {
     try {
-        const allEvents = await Event.find({})
+        const allEvents = await Event.findById(getId(token))
 
         res.status(200).json(allEvents)
 
@@ -26,20 +37,23 @@ router.get("/", async (req, res) => {
 
 router.post("/create", async (req, res) => {
     try {
+        const userId = getId()
         const {
             eventName,
             startTime,
-            eventLength
+            eventLength,
+            createdBy
         } = req.body
         if (
             !eventName ||
             !startTime ||
-            !eventLength
+            !eventLength ||
+            !createdBy
         ) {
             throw new Error("Please provide all properties")
         }
 
-        const newEvent = new Event({ eventName, startTime, eventLength })
+        const newEvent = new Event({ eventName, startTime, eventLength, createdBy })
 
         await newEvent.save()
 
@@ -81,7 +95,8 @@ router.put("/:id", async (req, res) => {
         const updatedEvent = await Event.findByIdAndUpdate(id, {
             eventName : req.body.eventName ?? eventName,
             startTime : req.body.startTime ?? startTime,
-            eventLength : req.body.eventLength ?? eventLength
+            eventLength : req.body.eventLength ?? eventLength,
+            createdBy : req.body.createdBy ?? createdBy
         })
 
         res.status(200).json({
