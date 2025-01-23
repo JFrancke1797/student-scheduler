@@ -15,17 +15,9 @@ import DropArg from '@fullcalendar/interaction'
 export default function Calender() {
 
  
-    const [events, setEvents] = useState([
-      {title: 'Classroom 1', id: '1'},
-      {title: 'Classroom 2', id: '2'},
-      {title: 'Classroom 3', id: '3'},
-      {title: 'Classroom 4', id: '4'},
-      {title: 'Classroom 5', id: '5'}
-    ])
+    const [events, setEvents] = useState([])
 
     const [allEvents, setAllevents] = useState([])
-    const [showmodal, setShowModal] = useState(false)
-    const [eventToEdit, setEventToEdit] = useState(null)
     const [newEvent, setNewEvent] = useState({
       title: '',
       start: '',
@@ -54,9 +46,8 @@ export default function Calender() {
     },[])
 
     function clickTing (arg){
-
+      //!This was a test function that might still be used
       setNewEvent({...newEvent, start: arg.date, allDay: arg.allDay, id: new Date().getDate()})
-      setShowModal(true)
       console.log(arg)
     }
 
@@ -97,7 +88,7 @@ export default function Calender() {
           <button onClick={handelAddEventInput}>Add</button>
           <button>Remove</button>
 
-    <h2>Teacher Schedule</h2>
+    <h2>Teacher Scheduel</h2>
       <FullCalendar
         plugins={[dayGridView,timeGridView,interactionPlugin,listPlugin, modalPlugin]}
         headerToolbar={{

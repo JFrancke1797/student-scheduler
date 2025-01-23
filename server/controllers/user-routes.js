@@ -74,7 +74,7 @@ router.post("/login", async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ err: "Invalid email or password" });
         }
-        
+
 
         // Generate JWT 
         const payload = {
