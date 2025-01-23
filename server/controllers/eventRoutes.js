@@ -1,29 +1,10 @@
 const router = require("express").Router()
 const jwt = require("jsonwebtoken")
-const jwt_decode = require("jwt-decode")
-
 const Event = require("../models/event")
-
-async function getId(token) {
-    const res = await fetch("http://127.0.0.1:4000/user/login", {
-        method: "GET",
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    })
-    const jwtToken = await res.json()
-    jwt.verify(jwtToken)
-
-    const decodedToken = jwtDecode(jwtToken)
-
-    const userId = decodedToken.id
-
-    return userId
-}
 
 router.get("/", async (req, res) => {
     try {
-        const allEvents = await Event.findById(getId(token))
+        const allEvents = await Event.find({ createdBy: req.user.id })
 
         res.status(200).json(allEvents)
 
@@ -37,23 +18,20 @@ router.get("/", async (req, res) => {
 
 router.post("/create", async (req, res) => {
     try {
-        const userId = getId()
         const {
             eventName,
             startTime,
             eventLength,
-            createdBy
         } = req.body
         if (
             !eventName ||
             !startTime ||
             !eventLength ||
-            !createdBy
         ) {
             throw new Error("Please provide all properties")
         }
 
-        const newEvent = new Event({ eventName, startTime, eventLength, createdBy })
+        const newEvent = new Event({ eventName, startTime, eventLength, createdBy: req.user.id })
 
         await newEvent.save()
 
@@ -124,8 +102,6 @@ router.delete("/:id", async (req, res) => {
             message: `${id} removed from the db`,
             deletedEvent
         })
-
-        save(restof, dbPath)
 
     } catch (err) {
         console.log(err)
