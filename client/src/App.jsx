@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react'
 import './App.css'
-// import { browswe }
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import LoginSignUp from './Components/LoginSignUp/LoginSignUp'
-import Calender from './Components/Calender'
+import Register from './Components/Register/Register'
+import Calendar from './Components/Calender'
+
+
 
 function App() {
-
   const [sessionToken, setSessionToken] = useState(undefined)
 
   useEffect(() => {
@@ -27,25 +29,38 @@ function App() {
     }
   }
 
-  const showLogoutBtn = () => !sessionToken ? null : (
-    <button onClick={logoutUser}>Logout</button>
-  )
-
-  const handleView = () => {
-    return !sessionToken
-      ? <LoginSignUp updateLocalStorage={updateLocalStorage} />
-      : <Calender sessionToken={sessionToken} />
-  }
+  const router = createBrowserRouter([
+    {
+      path: "/login",
+      element: sessionToken
+        ? <Navigate to="/calendar" replace />
+        : <LoginSignUp updateLocalStorage={updateLocalStorage}/>,
+    },
+    { path: "/register",
+      element: sessionToken
+        ?<Navigate to="/calendar" replace />
+        :<Register updateLocalStorage={updateLocalStorage} />},
+    {
+      path: "/calendar",
+      element: sessionToken
+        ? <div>
+          <button onClick={logoutUser} style={{ marginBottom: "10px"}} >
+            Logout
+          </button>
+          <Calendar sessionToken={sessionToken} />
+        </div>
+        : <Navigate to="/login" />,
+    },
+    {
+      path: "*",
+      element: <Navigate to={sessionToken ? "/calendar" : "/login"} replace />
+    },
+  ])
 
   return (
-    <div className="content">
-      {showLogoutBtn()}
-      {handleView()}
-      {/* <LoginSignUp updateLocalStorage={updateLocalStorage} /> */}
-    </ div>
-    // <>
-    // <Calender />
-    // </>
+      <div>
+        <RouterProvider router={router} />
+      </div>
   )
 }
 
