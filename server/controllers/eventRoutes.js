@@ -1,10 +1,10 @@
 const router = require("express").Router()
-
+const jwt = require("jsonwebtoken")
 const Event = require("../models/event")
 
 router.get("/", async (req, res) => {
     try {
-        const allEvents = await Event.find({})
+        const allEvents = await Event.find({ createdBy: req.user.userID })
 
         res.status(200).json(allEvents)
 
@@ -21,7 +21,7 @@ router.post("/create", async (req, res) => {
         const {
             eventName,
             startTime,
-            eventLength
+            eventLength,
         } = req.body
         if (
             !eventName ||
@@ -31,7 +31,7 @@ router.post("/create", async (req, res) => {
             throw new Error("Please provide all properties")
         }
 
-        const newEvent = new Event({ eventName, startTime, eventLength })
+        const newEvent = new Event({ eventName, startTime, eventLength, createdBy: req.user.userID })
 
         await newEvent.save()
 
@@ -73,8 +73,11 @@ router.put("/:id", async (req, res) => {
         const updatedEvent = await Event.findByIdAndUpdate(id, {
             eventName : req.body.eventName ?? eventName,
             startTime : req.body.startTime ?? startTime,
-            eventLength : req.body.eventLength ?? eventLength
+            eventLength : req.body.eventLength ?? eventLength,
+            createdBy : req.body.createdBy ?? createdBy
         })
+
+        await updatedEvent.save()
 
         res.status(200).json({
             message: "Event modified",
@@ -101,8 +104,6 @@ router.delete("/:id", async (req, res) => {
             message: `${id} removed from the db`,
             deletedEvent
         })
-
-        save(restof, dbPath)
 
     } catch (err) {
         console.log(err)
