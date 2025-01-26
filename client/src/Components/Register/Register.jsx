@@ -10,7 +10,7 @@ export default function LoginSignUp({ updateLocalStorage }) {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [register, setRegister] = useState(true)
-    const [message, SetMessage] = useState("")
+    // const [message, SetMessage] = useState("")
 
     const toggle = () => {
         setRegister(!register);
@@ -18,7 +18,7 @@ export default function LoginSignUp({ updateLocalStorage }) {
         setLastName("");
         setEmail("");
         setPassword("");
-        SetMessage("");
+        // SetMessage("");
     }
 
     const handleSubmit = event => {
@@ -29,7 +29,7 @@ export default function LoginSignUp({ updateLocalStorage }) {
             : "http://127.0.0.1:4000/user-routes/login"
 
             const body = register
-            ? { firstName,lastName, email, password }
+            ? { firstName, lastName, email, password }
             : { email, password }
 
         fetch(url, {
@@ -71,7 +71,7 @@ export default function LoginSignUp({ updateLocalStorage }) {
                 <input type="submit" className="submit" onClick={handleSubmit} value="Sign Up" />
             </div>
         </form>
-        {message && <p className="message">{message}</p>}
+        {/* {message && <p className="message">{message}</p>} */}
     </div>
     )
 }

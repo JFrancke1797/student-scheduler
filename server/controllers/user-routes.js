@@ -1,4 +1,3 @@
-
 const express = require("express");
 const User = require("../models/userData");
 const router = express.Router();
@@ -80,5 +79,3 @@ router.post("/login", async (req, res) => {
 });
 
 module.exports = router
-
-
