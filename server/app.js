@@ -8,12 +8,12 @@ const HOST = process.env.HOST
 const { dbConnect } = require("./db")
 const sessionValidation = require("./middlewares/session");
 const eventsController = require("./controllers/eventRoutes")
-const authController = require("./controllers/user-routes");
+const authController = require("./controllers/user-routes.js");
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
-app.use("/user", authController);
+app.use("/user-routes", authController);
 app.use("/events", sessionValidation, eventsController)
 
 app.listen(PORT, HOST, () => {

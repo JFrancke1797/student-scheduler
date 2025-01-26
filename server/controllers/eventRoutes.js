@@ -26,7 +26,7 @@ router.post("/create", async (req, res) => {
         if (
             !eventName ||
             !startTime ||
-            !eventLength ||
+            !eventLength 
         ) {
             throw new Error("Please provide all properties")
         }

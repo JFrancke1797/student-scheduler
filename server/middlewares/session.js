@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken")
 const User = require("../models/userData")
 const JWT_KEY = process.env.JWT_KEY
 
+
 const sessionValidation = async (req, res, next) => {
     try {
         if (req.method === "OPTIONS") next()
