@@ -4,15 +4,17 @@ const User = require("../models/userData")
 const JWT_KEY = process.env.JWT_KEY
 
 const sessionValidation = async (req, res, next) => {
+
     try {
+        
         if (req.method === "OPTIONS") next()
         if (!req.headers.authorization) throw new Error("Forbidden")
         const authToken = req.headers.authorization.includes("Bearer")
             ? req.headers.authorization.split(" ")[1]
             : req.headers.authorization
         const payload = jwt.verify(authToken, JWT_KEY)
-
-        const foundUser = await User.findById(payload._id)
+        console.log(payload, 'smajaskn')
+        const foundUser = await User.findById(payload.id)
         console.log(foundUser)
         req.body.user = { userID: foundUser._id, firstName: foundUser.firstName }
 

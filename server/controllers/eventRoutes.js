@@ -19,19 +19,17 @@ router.get("/", async (req, res) => {
 router.post("/create", async (req, res) => {
     try {
         const {
-            eventName,
-            startTime,
-            eventLength,
+            title,
+            startDate
         } = req.body
+        console.log(req.body)
         if (
-            !eventName ||
-            !startTime ||
-            !eventLength
+            !title
         ) {
             throw new Error("Please provide all properties")
         }
 
-        const newEvent = new Event({ eventName, startTime, eventLength, createdBy: req.user.userID })
+        const newEvent = new Event({ title, startDate, createdBy: req.body.user.userID })
 
         await newEvent.save()
 
