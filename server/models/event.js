@@ -2,16 +2,12 @@ const { mongoose } = require("../db")
 
 const Event = mongoose.Schema(
     {
-        eventName: {
+        title: {
             type: String,
             required: true,
         },
         startTime: {
             type: String,
-            required: true
-        },
-        eventLength: {
-            type: Number,
             required: true
         },
         createdBy: {

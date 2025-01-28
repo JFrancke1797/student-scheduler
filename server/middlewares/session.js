@@ -12,7 +12,7 @@ const sessionValidation = async (req, res, next) => {
             : req.headers.authorization
         const payload = jwt.verify(authToken, JWT_KEY)
 
-        const foundUser = await User.findById(payload._id)
+        const foundUser = await User.findById(payload.id)
 
         req.body.user = { userID: foundUser._id, firstName: foundUser.firstName }
 

@@ -19,19 +19,19 @@ router.get("/", async (req, res) => {
 router.post("/create", async (req, res) => {
     try {
         const {
-            eventName,
+            title,
             startTime,
-            eventLength,
+            //eventLength,
         } = req.body
         if (
-            !eventName ||
-            !startTime ||
-            !eventLength
+            !title ||
+            !startTime
+            // eventLength
         ) {
             throw new Error("Please provide all properties")
         }
 
-        const newEvent = new Event({ eventName, startTime, eventLength, createdBy: req.user.userID })
+        const newEvent = new Event({ title, startTime, createdBy: req.user.userID })
 
         await newEvent.save()
 
@@ -71,9 +71,9 @@ router.put("/:id", async (req, res) => {
         const { id } = req.params
 
         const updatedEvent = await Event.findByIdAndUpdate(id, {
-            eventName : req.body.eventName ?? eventName,
+            title : req.body.title ?? title,
             startTime : req.body.startTime ?? startTime,
-            eventLength : req.body.eventLength ?? eventLength,
+            // eventLength : req.body.eventLength ?? eventLength,
             createdBy : req.body.createdBy ?? createdBy
         })
 
