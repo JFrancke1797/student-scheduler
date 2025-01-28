@@ -16,70 +16,111 @@ export default function Calender() {
 
  
     const [events, setEvents] = useState([])
-
     const [allEvents, setAllevents] = useState([])
     const [newEvent, setNewEvent] = useState({
       title: '',
       start: '',
       end: '',
       allDay: false,
-      id: 0
     })
+    const [data, setData] = useState(null)
+    const [error, setError] = useState(null)
+
 
     useEffect(() => {
       
-      let dropTing = document.getElementById('draggable-el')
+      let dropThing = document.getElementById('draggable-el')
       
-      if(dropTing){
-        new Draggable(dropTing,{
+      if(dropThing){
+        new Draggable(dropThing,{
           itemSelector: 'div',
           eventData: function(eventEl){
             let title = eventEl.getAttribute('title')
-            let id = eventEl.getAttribute('data')
-            let start = eventEl.getAttribute('start')
 
-            return{title, id, start}
+            return{title}
           }
         })
       }
 
     },[])
 
+    async function postData (arg){
+
+
+      const URL = 'http://127.0.0.1:4000/events/create'
+      const title = arg.event.title
+      const startDate = arg.event.startStr
+      const token = localStorage.getItem('token')
+
+      const evnt = {
+        title: title,
+        startDate: startDate
+      }
+    
+      try{
+
+        const res = await fetch(URL,{
+          method: 'Post',
+          headers: {'Content-Type': 'application/json',
+                    'Authorization': `${token}`
+          },
+          body: JSON.stringify(evnt)
+        })
+
+        if(!res.ok){
+          if(res.status === 404){
+            throw new Error(res.statusText)
+          }
+        }
+
+        const info = await res.json()
+        
+        setData(info)
+
+      }catch(err){
+        console.log(err.message)
+        setError(error)
+      }
+    }
+
     function clickTing (arg){
-      //!This was a test function that might still be used
+      //!This was a test function that might still be
       setNewEvent({...newEvent, start: arg.date, allDay: arg.allDay, id: new Date().getDate()})
       console.log(arg)
     }
 
-    function addEvent(data = DropArg){
-      
-      const event = {...newEvent, start: data.date.toISOString(), title: data.draggedEl.innerText, allDay: data.allDay}
-      setAllevents([...allEvents, event])
-    }
-
     function handelAddEventInput(){
 
+      const id = Math.floor(Math.random() * 16)
       const addedEvent = document.getElementById('inputs').value
       document.getElementById('inputs').value = ''
-      setEvents([...events, {title: addedEvent, start: '', allDay: '', id: events.id}])
-    
+      setEvents([...events, {title: addedEvent, start: '', allDay: '', id: id }])
+      
     }
 
+    const handleClicking = (e, nme) => {
 
+      console.log(e)
+      const editModal = window.prompt('Enter the data')
+      const ting = e.view.calendar.getEvents().map(evnt => evnt._def.title = editModal)
+      return e.view.calendar.addEvent({title: ting, date: e.dateStr})
+    }
+
+    
 
   return (
     <>
     
-    <div id='Apptings'>
+    <div id='Application'>
      <div id='draggable-el'>
   
           <h1>Drag Events</h1>
-          {events.map((tings,i) => (
+          {events.map((ev,i) => (
             <div 
-              title= {tings.title}
+              title= {ev.title}
               key={i}
             >
-              {tings.title}
+              {ev.title}
             </div>
           ))}
         </div>
@@ -100,11 +141,12 @@ export default function Calender() {
         selectable = {true}
         editable = {true}
         listDaySideFormat
-        drop={(data) => addEvent(data)}
         eventClick={(info) => {
-          console.log(info)
+        handleClicking(info)
+        postData(info)
         }}
         dayMaxEventRows={true}
+        eventBackgroundColor={'blue' ? 'black' : 'yellow'}
       />
     </div>
        
