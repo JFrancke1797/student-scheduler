@@ -48,6 +48,12 @@ export default function Calender() {
     setEvents([...events, { title: addedEvent, id: newId }])
     setAllEvents([...allEvents, { title: addedEvent, start: '', allDay: false, id: newId }])
   }
+  
+  function handleKeyDown(event) {
+    if (event.key === 'Enter') {
+      handleAddEventInput()
+    }
+  }
 
   function toggleRemoveMode() {
     setIsRemoveMode(!isRemoveMode) // Toggle remove mode on/off
@@ -77,7 +83,7 @@ export default function Calender() {
           ))}
         </div>
         <h1>Add An Event</h1>
-        <input type="text" placeholder="add an event" id="inputs" />
+        <input type="text" placeholder="add an event" id="inputs"  onKeyDown={handleKeyDown}/>
         <button onClick={handleAddEventInput}>Add</button>
         <button onClick={toggleRemoveMode} style={{ backgroundColor: isRemoveMode ? 'red' : '' }}>
           {isRemoveMode ? 'Cancel Remove Mode' : 'Remove'}
