@@ -124,7 +124,7 @@ router.post("/forgot-password", async (req, res) => {
     }
 });
 
-router.post("/validate-otp", async (req, res) => {
+router.post("/otp-validation", async (req, res) => {
     const { email, otp } = req.body;
     const currentTime = new Date().getTime();
 
