@@ -27,6 +27,19 @@ export default function Calender() {
     })
 
     useEffect(() => {
+      const fetchEvents = async () => {
+        const token = localStorage.getItem('token')
+        const { data } = await fetch('http://127.0.0.1:4000/events', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        setEvents(data);
+      }
+      fetchEvents()
+    }, [])
+
+    useEffect(() => {
       
       let dropTing = document.getElementById('draggable-el')
       
@@ -88,7 +101,7 @@ export default function Calender() {
           <button onClick={handelAddEventInput}>Add</button>
           <button>Remove</button>
 
-    <h2>Teacher Scheduel</h2>
+    <h2>Teacher Schedule</h2>
       <FullCalendar
         plugins={[dayGridView,timeGridView,interactionPlugin,listPlugin, modalPlugin]}
         headerToolbar={{
