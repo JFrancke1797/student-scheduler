@@ -25,8 +25,8 @@ export default function LoginSignUp({ updateLocalStorage }) {
         event.preventDefault();
 
         const url = login
-            ? "http://127.0.0.1:4000/user-routes/login"
-            : "http://127.0.0.1:4000/user-routes/register"
+            ? "http://127.0.0.1:4000/user/login"
+            : "http://127.0.0.1:4000/user/register"
 
             const body = login
             ? { email, password }

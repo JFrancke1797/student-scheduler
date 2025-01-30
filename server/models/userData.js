@@ -1,6 +1,4 @@
 const { mongoose } = require("../db")
-//isAdmin must be present in auth
-// const isAdmin = require("../middlewares/isAdmin")
 
 const userData = mongoose.Schema(
     
@@ -35,6 +33,6 @@ const userData = mongoose.Schema(
             default: "User", // Default role
         },
     },
-    { collection: "userData" }
-) 
+    { collection: "userData" } // collection is named "userData"
+)
     module.exports = mongoose.model("User", userData)

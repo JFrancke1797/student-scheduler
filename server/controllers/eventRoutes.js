@@ -4,7 +4,7 @@ const Event = require("../models/event")
 
 router.get("/", async (req, res) => {
     try {
-        const allEvents = await Event.find({ createdBy: req.user.id })
+        const allEvents = await Event.find({ createdBy: req.user.userID })
 
         res.status(200).json(allEvents)
 
@@ -31,7 +31,7 @@ router.post("/create", async (req, res) => {
             throw new Error("Please provide all properties")
         }
 
-        const newEvent = new Event({ eventName, startTime, eventLength, createdBy: req.user.id })
+        const newEvent = new Event({ eventName, startTime, eventLength, createdBy: req.user.userID })
 
         await newEvent.save()
 
@@ -76,6 +76,8 @@ router.put("/:id", async (req, res) => {
             eventLength : req.body.eventLength ?? eventLength,
             createdBy : req.body.createdBy ?? createdBy
         })
+
+        await updatedEvent.save()
 
         res.status(200).json({
             message: "Event modified",

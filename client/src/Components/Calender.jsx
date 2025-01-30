@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, useRef } from 'react'
+import React ,{ useState, useEffect, useRef } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridView from '@fullcalendar/daygrid'
 import timeGridView from '@fullcalendar/timegrid'
@@ -14,7 +14,7 @@ import DropArg from '@fullcalendar/interaction'
 
 export default function Calender() {
 
-
+ 
     const [events, setEvents] = useState([])
 
     const [allEvents, setAllevents] = useState([])
@@ -71,7 +71,7 @@ export default function Calender() {
     <>
     
     <div id='Apptings'>
-    <div id='draggable-el'>
+     <div id='draggable-el'>
   
           <h1>Drag Events</h1>
           {events.map((tings,i) => (
@@ -107,7 +107,7 @@ export default function Calender() {
         dayMaxEventRows={true}
       />
     </div>
-      
+    
     </>
   )
 }
