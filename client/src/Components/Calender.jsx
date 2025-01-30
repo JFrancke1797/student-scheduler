@@ -7,8 +7,10 @@ import interactionPlugin, {Draggable} from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
 import '../Components/Calender.css'
 import modalPlugin from '@fullcalendar/interaction'
+import { Button } from '@mui/material'
+import Box from '@mui/material/Box';
+import Input from '@mui/material/Input';
 
-import DropArg from '@fullcalendar/interaction'
 
 
 
@@ -17,32 +19,13 @@ export default function Calender() {
  
     const [events, setEvents] = useState([])
     const [allEvents, setAllevents] = useState([])
-    const [newEvent, setNewEvent] = useState({
-      title: '',
-      start: '',
-      end: '',
-      allDay: false,
-    })
     const [data, setData] = useState(null)
     const [error, setError] = useState(null)
-
-
-    useEffect(() => {
-      
-      let dropThing = document.getElementById('draggable-el')
-      
-      if(dropThing){
-        new Draggable(dropThing,{
-          itemSelector: 'div',
-          eventData: function(eventEl){
-            let title = eventEl.getAttribute('title')
-
-            return{title}
-          }
-        })
-      }
-
-    },[])
+    const [showModal, setShowModal] = useState(false)
+    const [selectedEvent, setSelectedEvent] = useState(null)
+    const [isRemoveMode, setIsRemoveMode] = useState(false) // State to track "remove mode"
+    
+    const calendarRef = useRef(null) // Reference for FullCalendar
 
     async function postData (arg){
 
@@ -50,11 +33,13 @@ export default function Calender() {
       const URL = 'http://127.0.0.1:4000/events/create'
       const title = arg.event.title
       const startDate = arg.event.startStr
+      const description = arg.event.description
       const token = localStorage.getItem('token')
 
       const evnt = {
         title: title,
-        startDate: startDate
+        startDate: startDate,
+        description: description
       }
     
       try{
@@ -83,34 +68,124 @@ export default function Calender() {
       }
     }
 
-    function clickTing (arg){
-      //!This was a test function that might still be
-      setNewEvent({...newEvent, start: arg.date, allDay: arg.allDay, id: new Date().getDate()})
-      console.log(arg)
+    useEffect(() => {
+      
+      let dropItem = document.getElementById('draggable-el')
+      
+      if(dropItem){
+        new Draggable(dropItem,{
+          itemSelector: 'div',
+          eventData: function(eventEl){
+            let title = eventEl.getAttribute('title')
+            let id = eventEl.getAttribute('data')
+            let description = eventEl.getAttribute('description')
+            let backgroundColor = eventEl.getAttribute('backgroundColor')
+            return{title, id,description,backgroundColor}
+          }
+        })
+      }
+
+    },[])
+
+    function addEvent (data) {
+      const event = {
+        title: data.draggedEl.innerText,
+        start: data.date.toISOString(),
+        allDay: data.allDay,
+        id: new Date().getTime().toString(),
+        description: data.description,
+        backgroundColor: data.backgroundColor
+      }
+      setAllevents([...allEvents, event])
+      console.log(event)
     }
 
     function handelAddEventInput(){
 
-      const id = Math.floor(Math.random() * 16)
-      const addedEvent = document.getElementById('inputs').value
+      let addedEvent = document.getElementById('inputs').value
+      if(addedEvent === ''){
+        window.alert('You didnt add a name')
+        return
+      }
+      let el = document.getElementById('draggable-el')
+      console.log(el)
       document.getElementById('inputs').value = ''
-      setEvents([...events, {title: addedEvent, start: '', allDay: '', id: id }])
+      const newId = new Date().getTime().toString()
+      setEvents([...events, {title: addedEvent,id: newId, description: ''}])
+      setAllevents([...allEvents, {title: addedEvent, start: '',id: newId,description: ''}])
       
     }
 
-    const handleClicking = (e, nme) => {
-
-      console.log(e)
-      const editModal = window.prompt('Enter the data')
-      const ting = e.view.calendar.getEvents().map(evnt => evnt._def.title = editModal)
-      return e.view.calendar.addEvent({title: ting, date: e.dateStr})
+    function handleKeyDown(event) {
+      if (event.key === 'Enter') {
+        handleAddEventInput()
+      }
     }
 
+    function toggleRemoveMode() {
+      setIsRemoveMode(!isRemoveMode) // Toggle remove mode on/off
+    }
     
+    function handleEventClick(info) {
+      if (isRemoveMode) {
+        if (window.confirm(`Are you sure you want to delete the event: "${info.event.title}"?`)) {
+          info.event.remove() // Remove the clicked event
+          console.log(`Event with ID ${info.event.id} removed.`)
+        }
+        setIsRemoveMode(false) // Turn off remove mode after deletion
+      } else {
+        console.log(`Clicked on event: ${info.event.title}`)
+      }
+    }
 
+    const handleClicking = (info) => {
+      window.alert(`You've selected ${info.event._def.title}`)
+      const editedEventId = info.event._def.publicId
+      const editedEventTitle = window.prompt('Enter the new data for the event')
+      
+      if(editedEventTitle === null){
+        return
+      }
+      const newDesc = window.prompt('Add a note to the event')
+      const updatedEvents = allEvents.map((event) => {
+        if (event.id === editedEventId) {
+          return { ...event, title: editedEventTitle, 
+                              description: newDesc
+          }
+        }
+        return event
+      })
+  
+      setAllevents(updatedEvents)
+      setSelectedEvent(info.event)
+      setShowModal(true)
+    }
+
+    function closeModal(){
+      setShowModal(false)
+      setSelectedEvent(null)
+    }
+
+    const changeEventColor = () => {
+        
+        
+      const updatedEvent = allEvents.map((evnt) => {
+        if(evnt.id === selectedEvent.id){
+          console.log(evnt)
+        }
+        return evnt
+      })
+      setAllevents(updatedEvent)
+      console.log(updatedEvent)
+      if(!selectedEvent){
+        console.log('please select an event')
+        return
+      }
+    }
+    
   return (
     <>
-    
+
     <div id='Application'>
      <div id='draggable-el'>
   
@@ -119,18 +194,49 @@ export default function Calender() {
             <div 
               title= {ev.title}
               key={i}
+              id='drag-evnt'
+              onClick={()=> handleClicking(ev)}
             >
               {ev.title}
             </div>
           ))}
         </div>
+          <div id='addEventFld'>
+
           <h1>Add An Event</h1>
-          <input type="text" placeholder='add an event' id='inputs' />
-          <button onClick={handelAddEventInput}>Add</button>
-          <button>Remove</button>
+          <Box
+          component="form"
+          sx={{ '& > :not(style)': { m: 1 } }}
+          noValidate
+          autoComplete="off"
+          >
+         
+          <Input placeholder='Add name here' id='inputs' type='text' onKeyDown={handleKeyDown}/>
+          </Box>
+          <Button variant='contained' onClick={handelAddEventInput}>Add</Button>
+          <Button variant='contained' onClick={toggleRemoveMode} style={{backgroundColor: isRemoveMode ? 'red' : '' }}
+          
+          >{isRemoveMode ? 'Cancel Remove Mode' : 'Remove'}</Button>
+          </div>
+
+          <h2>The EVENT</h2>
+          <div id='showingEvent'>
+          {showModal && selectedEvent && (
+            <div className='modal'>
+              <h3>Event Details</h3>
+              <p>Title: {selectedEvent.title}</p>
+              <p>Description: {selectedEvent.description}</p>
+              <input type="text" placeholder='Description...' id='desc-input' />
+              <button onClick={handleClicking} >Add</button>
+              <button onClick={closeModal}>Close</button>
+            </div>
+
+          )}
+          </div>
 
     <h2>Teacher Scheduel</h2>
       <FullCalendar
+        ref={calendarRef}
         plugins={[dayGridView,timeGridView,interactionPlugin,listPlugin, modalPlugin]}
         headerToolbar={{
             center: 'title',
@@ -141,15 +247,21 @@ export default function Calender() {
         selectable = {true}
         editable = {true}
         listDaySideFormat
+        drop={(info) => {
+          addEvent(info)
+        }}
         eventClick={(info) => {
-        handleClicking(info)
-        postData(info)
+        //handleClicking(info) //!Removes event off calendar
+        handleEventClick(info)
+        //postData(info) //!Posts data to the database
         }}
         dayMaxEventRows={true}
-        eventBackgroundColor={'blue' ? 'black' : 'yellow'}
+        events={allEvents}
+        eventBackgroundColor={'#378006'}
       />
+      <button onClick={changeEventColor}>Color Change</button>
     </div>
-       
+      
     </>
   )
 }

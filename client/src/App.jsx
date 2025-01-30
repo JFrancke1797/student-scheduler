@@ -38,7 +38,6 @@ function App() {
   }
 
   return (
-    // <Calender />
     <>
     <div className="content">
       {showLogoutBtn()}
