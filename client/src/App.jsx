@@ -38,13 +38,12 @@ function App() {
   }
 
   return (
-   // <div className="content">
-     // {showLogoutBtn()}
-    //  {handleView()}
-    //  {/* <LoginSignUp updateLocalStorage={updateLocalStorage} /> */}
-   // </ div>
-     <>
-     <Calender />
+    <>
+    <div className="content">
+      {showLogoutBtn()}
+      {handleView()}
+    {/* <LoginSignUp updateLocalStorage={updateLocalStorage} /> */}
+    </ div>
     </>
   )
 }

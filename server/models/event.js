@@ -6,9 +6,9 @@ const Event = mongoose.Schema(
             type: String,
             required: true,
         },
-        startTime: {
+
+        startDate: {
             type: String,
-            required: true
         },
         createdBy: {
             type: String,
