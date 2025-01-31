@@ -16,6 +16,7 @@
     "@fullcalendar/list": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
+    "axios": "^1.7.9",
     "date-fns": "^4.1.0",
     "esbuild": "^0.24.2",
     "prop-types": "^15.8.1",

@@ -25,8 +25,8 @@ export default function LoginSignUp({ updateLocalStorage }) {
         event.preventDefault();
 
         const url = login
-            ? "http://127.0.0.1:4000/user/login"
-            : "http://127.0.0.1:4000/user/register"
+            ? "http://127.0.0.1:4000/user-routes/login"
+            : "http://127.0.0.1:4000/user-routes/register"
 
             const body = login
             ? { email, password }
@@ -61,6 +61,9 @@ export default function LoginSignUp({ updateLocalStorage }) {
                     Register
                 </Link>
                 <input type="submit" className="submit" onClick={handleSubmit} value="Login" />
+                <Link to="/forgot-password" type="submit" className="submit">
+                    Forgot Password?
+                </Link>
             </div>
         </form>
         {/* {message && <p className="message">{message}</p>} */}

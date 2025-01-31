@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react'
 import LoginSignUp from './Components/LoginSignUp/LoginSignUp'
 import Register from './Components/Register/Register'
 import Calendar from './Components/Calender'
-
+import ForgotPassword from "./Components/ForgotPassword/ForgotPassword"
+import OTPValidation from "./Components/OTPvalidation/OTPvalidation"
+import ResetPassword from "./Components/ResetPassword/ResetPassword"
 
 
 function App() {
@@ -36,10 +38,30 @@ function App() {
         ? <Navigate to="/calendar" replace />
         : <LoginSignUp updateLocalStorage={updateLocalStorage}/>,
     },
-    { path: "/register",
+    {
+      path: "/register",
       element: sessionToken
         ?<Navigate to="/calendar" replace />
-        :<Register updateLocalStorage={updateLocalStorage} />},
+        :<Register updateLocalStorage={updateLocalStorage} />
+    },
+    {
+      path: "/forgot-password",
+      element: sessionToken
+        ? <Navigate to="/calendar" />
+        : <ForgotPassword />
+    },
+    {
+      path: "/otp-validation",
+      element: sessionToken
+      ? <Navigate to="/calendar" />
+      : <OTPValidation />
+    },
+    {
+      path: "/reset-password",
+      element: sessionToken
+      ? <Navigate to="/calendar" />
+      : <ResetPassword />
+    },
     {
       path: "/calendar",
       element: sessionToken
