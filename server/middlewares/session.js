@@ -4,7 +4,9 @@ const User = require("../models/userData")
 const JWT_KEY = process.env.JWT_KEY
 
 const sessionValidation = async (req, res, next) => {
+
     try {
+        
         if (req.method === "OPTIONS") next()
         if (!req.headers.authorization) throw new Error("Forbidden")
         const authToken = req.headers.authorization.includes("Bearer")
