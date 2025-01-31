@@ -71,12 +71,16 @@ export default function Calender() {
     useEffect(() => {
       const fetchEvents = async () => {
         const token = localStorage.getItem('token')
-        const { data } = await fetch('http://127.0.0.1:4000/events', {
+        const data = await fetch('http://127.0.0.1:4000/events', {
+          method: 'GET',
           headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           }
         })
-        setEvents(data);
+        const response = await data.json()
+        console.log(response)
+        setEvents(response);
       }
       fetchEvents()
     }, [])
@@ -113,7 +117,7 @@ export default function Calender() {
       console.log(event)
     }
 
-    function handelAddEventInput(){
+    function handleAddEventInput(){
 
       let addedEvent = document.getElementById('inputs').value
       if(addedEvent === ''){
@@ -179,28 +183,28 @@ export default function Calender() {
       setSelectedEvent(null)
     }
 
-    const changeEventColor = () => {
+    // const changeEventColor = () => {
         
         
-      const updatedEvent = allEvents.map((evnt) => {
-        if(evnt.id === selectedEvent.id){
-          console.log(evnt)
-        }
-        return evnt
-      })
-      setAllevents(updatedEvent)
-      console.log(updatedEvent)
-      if(!selectedEvent){
-        console.log('please select an event')
-        return
-      }
-    }
+    //   const updatedEvent = allEvents.map((evnt) => {
+    //     if(evnt.id === selectedEvent.id){
+    //       console.log(evnt)
+    //     }
+    //     return evnt
+    //   })
+    //   setAllevents(updatedEvent)
+    //   console.log(updatedEvent)
+    //   if(!selectedEvent){
+    //     console.log('please select an event')
+    //     return
+    //   }
+    // }
     
   return (
     <>
 
     <div id='Application'>
-     <div id='draggable-el'>
+      <div id='draggable-el'>
   
           <h1>Drag Events</h1>
           {events.map((ev,i) => (
@@ -223,10 +227,10 @@ export default function Calender() {
           noValidate
           autoComplete="off"
           >
-         
+        
           <Input placeholder='Add name here' id='inputs' type='text' onKeyDown={handleKeyDown}/>
           </Box>
-          <Button variant='contained' onClick={handelAddEventInput}>Add</Button>
+          <Button variant='contained' onClick={handleAddEventInput}>Add</Button>
           <Button variant='contained' onClick={toggleRemoveMode} style={{backgroundColor: isRemoveMode ? 'red' : '' }}
           
           >{isRemoveMode ? 'Cancel Remove Mode' : 'Remove'}</Button>
@@ -262,17 +266,18 @@ export default function Calender() {
         listDaySideFormat
         drop={(info) => {
           addEvent(info)
+          postData(info)
         }}
         eventClick={(info) => {
-        //handleClicking(info) //!Removes event off calendar
+        handleClicking(info) //!Removes event off calendar
         handleEventClick(info)
-        //postData(info) //!Posts data to the database
+        // postData(info) //!Posts data to the database
         }}
         dayMaxEventRows={true}
         events={allEvents}
         eventBackgroundColor={'#378006'}
       />
-      <button onClick={changeEventColor}>Color Change</button>
+      {/* <button onClick={changeEventColor}>Color Change</button> */}
     </div>
       
     </>
