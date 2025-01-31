@@ -4,7 +4,7 @@ const Event = require("../models/event")
 
 router.get("/", async (req, res) => {
     try {
-        const allEvents = await Event.find({ createdBy: req.user.userID })
+        const allEvents = await Event.find({ createdBy: req.body.user.userID })
 
         res.status(200).json(allEvents)
 
