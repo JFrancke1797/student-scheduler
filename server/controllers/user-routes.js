@@ -100,16 +100,16 @@ router.post("/forgot-password", async (req, res) => {
         }
 
         const otp = crypto.randomInt(10000, 99999).toString();
-        const otpExpire = Date.now() + 2000;
+        const otpExpiration = Date.now() + 2000;
 
         user.otp = otp
-        user.otpExpire = otpExpire
+        user.otpExpiration = otpExpiration
         await user.save()
         
         const transporter = nodemailer.createTransport ({
             host: "smtp.gmail.com",
-            port: 587,
-            secure: false,
+            port: 465,
+            secure: true,
             auth: {
                 user: process.env.EMAIL,
                 pass: process.env.EMAIL_PASSWORD,
@@ -120,7 +120,7 @@ router.post("/forgot-password", async (req, res) => {
             from: process.env.EMAIL,
             to: email,
             subject: "Password Reset OTP",
-            text: `Your OTP is: ${otp}. It will expire in 2 minute`
+            text: `Your OTP is: ${otp}. It will expire in 2 minutes.`
         }
         
 
@@ -148,7 +148,7 @@ router.post("/otp-validation", async (req, res) => {
         }
 
         user.otp = null
-        user.otpExpiry = null
+        user.otpExpiration = null
         await user.save()
 
         res.status(200).json({ message: "OTP validate successfully" })
@@ -160,6 +160,7 @@ router.post("/otp-validation", async (req, res) => {
 
 router.post("/reset-password", async (req, res) => {
     const { email, newPassword, confirmPassword } = req.body
+    console.log(req.body)
 
     try {
         if (newPassword !== confirmPassword) {
@@ -168,12 +169,15 @@ router.post("/reset-password", async (req, res) => {
 
         const user = await User.findOne({ email })
         if(!user) {
-            return res.status(404).json({ error: "Email not found"})
+            return res.status(404).json({ error: "User not found"})
         }
 
         const saltRounds = parseInt(process.env.SALT);
         const hashedPassword = await bcrypt.hash(newPassword, saltRounds)
+        
+        console.log(user.password)
         user.password = hashedPassword
+        console.log(user.password)
 
         await user.save()
 
