@@ -60,7 +60,7 @@ export default function LoginSignUp({ updateLocalStorage }) {
     <div className="login-container">
         <div className="header">
             <img className="header-img" src={logo_icon} alt="WebKIDSS Logo" />
-            <div className="text">{login ? "Login" : "Register"}</div>
+            <div className="text" id='login'>{login ? "Login" : "Register"}</div>
         </div>
         <form action="" onSubmit={handleSubmit} className="login-inputs">
             {register()}

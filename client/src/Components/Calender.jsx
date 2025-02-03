@@ -7,9 +7,10 @@ import interactionPlugin, {Draggable} from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
 import '../Components/Calender.css'
 import modalPlugin from '@fullcalendar/interaction'
-import { Button } from '@mui/material'
+import { Button, createTheme, ThemeProvider } from '@mui/material'
 import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
+
 
 
 
@@ -182,14 +183,23 @@ export default function Calender() {
         return
       }
     }
+
+    const theme = createTheme({
+      palette:{
+        primary:{
+          main: '#1a1f3d'
+        }
+      }
+    })
     
   return (
     <>
+      <div className='container'>
+      <div className='left-side'>
 
-    <div id='Application'>
-     <div id='draggable-el'>
+    <div id='draggable-el'>
+          <h1>Students</h1>
   
-          <h1>Drag Events</h1>
           {events.map((ev,i) => (
             <div 
               title= {ev.title}
@@ -203,40 +213,53 @@ export default function Calender() {
         </div>
           <div id='addEventFld'>
 
-          <h1>Add An Event</h1>
+          <h1>Add Student Name</h1>
+          <ThemeProvider theme={theme}>
+
           <Box
           component="form"
           sx={{ '& > :not(style)': { m: 1 } }}
           noValidate
           autoComplete="off"
           >
-         
+        
+        
+
           <Input placeholder='Add name here' id='inputs' type='text' onKeyDown={handleKeyDown}/>
           </Box>
-          <Button variant='contained' onClick={handelAddEventInput}>Add</Button>
+          <Button variant='contained' onClick={handelAddEventInput} color='primary'>Add</Button>
           <Button variant='contained' onClick={toggleRemoveMode} style={{backgroundColor: isRemoveMode ? 'red' : '' }}
-          
           >{isRemoveMode ? 'Cancel Remove Mode' : 'Remove'}</Button>
+
+          </ThemeProvider>
           </div>
 
-          <h2>The EVENT</h2>
+          <ThemeProvider theme={theme}>
+
+          <h2>Student</h2>
           <div id='showingEvent'>
           {showModal && selectedEvent && (
             <div className='modal'>
-              <h3>Event Details</h3>
-              <p>Title: {selectedEvent.title}</p>
+              <h3>Students Details</h3>
+              <p>Name: {selectedEvent.title}</p>
               <p>Description: {selectedEvent.description}</p>
               <input type="text" placeholder='Description...' id='desc-input' />
-              <button onClick={handleClicking} >Add</button>
-              <button onClick={closeModal}>Close</button>
+              <Button variant="contained" onClick={handleClicking}>Add</Button>
+              <Button variant='contained' onClick={closeModal}>Close</Button>
             </div>
 
           )}
           </div>
+          </ThemeProvider>
+      </div>
 
-    <h2>Teacher Scheduel</h2>
+      <div className='right-side'>
+
+    <h2 id='cal-title'>Teacher Schedule</h2>
+    <div className='full-cal'>
+
       <FullCalendar
-        ref={calendarRef}
+        
         plugins={[dayGridView,timeGridView,interactionPlugin,listPlugin, modalPlugin]}
         headerToolbar={{
             center: 'title',
@@ -251,16 +274,16 @@ export default function Calender() {
           addEvent(info)
         }}
         eventClick={(info) => {
-        //handleClicking(info) //!Removes event off calendar
-        handleEventClick(info)
-        //postData(info) //!Posts data to the database
+        handleClicking(info)
+        //postData(info)
         }}
         dayMaxEventRows={true}
         events={allEvents}
         eventBackgroundColor={'#378006'}
       />
-      <button onClick={changeEventColor}>Color Change</button>
     </div>
+      </div>
+      </div>
       
     </>
   )

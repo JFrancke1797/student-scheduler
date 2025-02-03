@@ -3,6 +3,7 @@ import './App.css'
 // import { browswe }
 import LoginSignUp from './Components/LoginSignUp/LoginSignUp'
 import Calender from './Components/Calender'
+import { Button, createTheme, ThemeProvider } from '@mui/material'
 
 function App() {
 
@@ -28,7 +29,7 @@ function App() {
   }
 
   const showLogoutBtn = () => !sessionToken ? null : (
-    <button onClick={logoutUser}>Logout</button>
+    <Button variant='contained' onClick={logoutUser}>Logout</Button>
   )
 
   const handleView = () => {
@@ -37,13 +38,25 @@ function App() {
       : <Calender sessionToken={sessionToken} />
   }
 
+  
+  const theme = createTheme({
+    palette:{
+      primary:{
+        main: '#dee8f7'
+      }
+    }
+  })
+
   return (
     <>
+    <ThemeProvider theme={theme}>
+
     <div className="content">
       {showLogoutBtn()}
       {handleView()}
     {/* <LoginSignUp updateLocalStorage={updateLocalStorage} /> */}
     </ div>
+    </ThemeProvider>
     </>
   )
 }

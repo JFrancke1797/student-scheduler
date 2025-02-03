@@ -63,7 +63,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 15vw;
+    width: 10rem;
     height: 50px;
     border-radius: 10px;
     border: none;
@@ -75,6 +75,7 @@
 
 .submit :hover{
     color: gray;
+    
 }
 
 .gray {
@@ -89,4 +90,9 @@
     background: ghostwhite;
     color: gray;
     cursor: pointer;
+}
+
+#Login {
+
+    width: 15vw;
 }
