@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 // import { browswe }
 import LoginSignUp from './Components/LoginSignUp/LoginSignUp'
-import Calender from './Components/Calender'
+import Calendar from './Components/Calendar'
 
 function App() {
 
@@ -34,7 +34,7 @@ function App() {
   const handleView = () => {
     return !sessionToken
       ? <LoginSignUp updateLocalStorage={updateLocalStorage} />
-      : <Calender sessionToken={sessionToken} />
+      : <Calendar sessionToken={sessionToken} />
   }
 
   return (

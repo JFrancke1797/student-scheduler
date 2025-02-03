@@ -5,7 +5,7 @@ import dayGridView from '@fullcalendar/daygrid'
 import timeGridView from '@fullcalendar/timegrid'
 import interactionPlugin, {Draggable} from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
-import '../Components/Calender.css'
+import '../Components/Calendar.css'
 import modalPlugin from '@fullcalendar/interaction'
 import { Button } from '@mui/material'
 import Box from '@mui/material/Box';
@@ -14,7 +14,7 @@ import Input from '@mui/material/Input';
 
 
 
-export default function Calender() {
+export default function Calendar() {
 
  
     const [events, setEvents] = useState([])
@@ -28,12 +28,13 @@ export default function Calender() {
     const calendarRef = useRef(null) // Reference for FullCalendar
 
     async function postData (arg){
+      console.log(arg)
 
 
       const URL = 'http://127.0.0.1:4000/events/create'
-      const title = arg.event.title
-      const startDate = arg.event.startStr
-      const description = arg.event.description
+      const title = arg.draggedEl.innerText
+      const startDate = arg.dateStr
+      const description = arg.draggedEl.innerText
       const token = localStorage.getItem('token')
 
       const evnt = {
@@ -69,6 +70,9 @@ export default function Calender() {
     }
 
     useEffect(() => {
+      const calendarApi = calendarRef.current.getApi()
+      calendarApi.changeView('timeGridWeek')
+
       const fetchEvents = async () => {
         const token = localStorage.getItem('token')
         const data = await fetch('http://127.0.0.1:4000/events', {
@@ -81,11 +85,13 @@ export default function Calender() {
         const response = await data.json()
         console.log(response)
         setEvents(response);
+        for(let i=0; i < response.length; i++) {
+          calendarApi.addEvent({ id: response[i]._id, title: response[i].title, start: response[i].startDate, end: response[i].end })
+        }
+        console.log("calendarApi", calendarApi.getEvents())
       }
       fetchEvents()
-    }, [])
 
-    useEffect(() => {
       
       let dropItem = document.getElementById('draggable-el')
       
@@ -113,7 +119,7 @@ export default function Calender() {
         description: data.description,
         backgroundColor: data.backgroundColor
       }
-      setAllevents([...allEvents, event])
+      // setAllevents([...allEvents, event])
       console.log(event)
     }
 
@@ -142,16 +148,49 @@ export default function Calender() {
     function toggleRemoveMode() {
       setIsRemoveMode(!isRemoveMode) // Toggle remove mode on/off
     }
+
+    async function updateEvent(info) {
+      const token = localStorage.getItem("token")
+      const event = {
+        title: info.event.title,
+        startDate: info.event.startStr,
+        end: info.event.endStr
+      }
+      console.log(info)
+      const res = await fetch(`http://127.0.0.1:4000/events/${info.event.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(event)
+      })
+      console.log(res)
+    }
+
+    async function deleteEvent(eventId) {
+      const token = localStorage.getItem("token")
+      const res = await fetch(`http://127.0.0.1:4000/events/${eventId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      console.log(res)
+    }
     
     function handleEventClick(info) {
       if (isRemoveMode) {
+
         if (window.confirm(`Are you sure you want to delete the event: "${info.event.title}"?`)) {
+          deleteEvent(info.event.id)
           info.event.remove() // Remove the clicked event
           console.log(`Event with ID ${info.event.id} removed.`)
         }
         setIsRemoveMode(false) // Turn off remove mode after deletion
       } else {
-        console.log(`Clicked on event: ${info.event.title}`)
+        console.log(info.event)
       }
     }
 
@@ -257,7 +296,7 @@ export default function Calender() {
         plugins={[dayGridView,timeGridView,interactionPlugin,listPlugin, modalPlugin]}
         headerToolbar={{
             center: 'title',
-            left: 'dayGridMonth,timeGridWeek,dayGridDay,listWeek'
+            left: 'timeGridWeek,dayGridDay,listWeek'
         }}
         nowIndicator={true}
         droppable = {true}
@@ -266,12 +305,17 @@ export default function Calender() {
         listDaySideFormat
         drop={(info) => {
           addEvent(info)
-          postData(info)
+        }}
+        eventDrop={(info) => {
+          postData(info) //!Posts data to the database
+        }}
+        eventResize={(info) => {
+          updateEvent(info)
+          console.log(info)
         }}
         eventClick={(info) => {
         handleClicking(info) //!Removes event off calendar
         handleEventClick(info)
-        // postData(info) //!Posts data to the database
         }}
         dayMaxEventRows={true}
         events={allEvents}
