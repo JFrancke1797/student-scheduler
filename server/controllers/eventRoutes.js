@@ -20,7 +20,8 @@ router.post("/create", async (req, res) => {
     try {
         const {
             title,
-            startDate
+            startDate,
+            end
         } = req.body
         console.log(req.body)
         if (
@@ -29,7 +30,7 @@ router.post("/create", async (req, res) => {
             throw new Error("Please provide all properties")
         }
 
-        const newEvent = new Event({ title, startDate, createdBy: req.body.user.userID })
+        const newEvent = new Event({ title, startDate, end, createdBy: req.body.user.userID })
 
         await newEvent.save()
 
@@ -68,11 +69,12 @@ router.put("/:id", async (req, res) => {
     try {
         const { id } = req.params
 
+        console.log(req.body)
+
         const updatedEvent = await Event.findByIdAndUpdate(id, {
             title : req.body.title ?? title,
-            startTime : req.body.startTime ?? startTime,
-            // eventLength : req.body.eventLength ?? eventLength,
-            createdBy : req.body.createdBy ?? createdBy
+            startDate : req.body.startDate ?? startDate,
+            end : req.body.end ?? end
         })
 
         await updatedEvent.save()
