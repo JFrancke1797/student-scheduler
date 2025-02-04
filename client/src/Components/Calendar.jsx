@@ -32,9 +32,9 @@ export default function Calendar() {
 
 
       const URL = 'http://127.0.0.1:4000/events/create'
-      const title = arg.draggedEl.innerText
-      const startDate = arg.dateStr
-      const description = arg.draggedEl.innerText
+      const title = arg.event.title
+      const startDate = arg.event.startStr
+      const description = arg.event.title
       const token = localStorage.getItem('token')
 
       const evnt = {
@@ -52,7 +52,6 @@ export default function Calendar() {
           },
           body: JSON.stringify(evnt)
         })
-
         if(!res.ok){
           if(res.status === 404){
             throw new Error(res.statusText)
@@ -119,7 +118,7 @@ export default function Calendar() {
         description: data.description,
         backgroundColor: data.backgroundColor
       }
-      // setAllevents([...allEvents, event])
+      setAllevents([...allEvents, event])
       console.log(event)
     }
 
